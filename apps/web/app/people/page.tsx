@@ -53,7 +53,7 @@ function PeopleContent() {
     const isPositive = (person?.netAmount ?? 0) >= 0;
 
     return (
-      <div className="min-h-dvh pb-8">
+      <div className="min-h-dvh pb-28">
         <header className="sticky top-0 z-30 bg-[#0a0f1e]/80 backdrop-blur-xl border-b border-white/5 px-4 py-3 flex items-center gap-3">
           <button onClick={() => router.back()} className="w-8 h-8 rounded-full bg-[#161f2e] flex items-center justify-center">
             <ArrowLeft size={16} />
@@ -113,6 +113,7 @@ function PeopleContent() {
 
         <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} />
         <AddRepaymentModal open={!!repaymentLoan} loan={repaymentLoan} repayments={repayments} onClose={() => setRepaymentLoan(null)} onSubmit={handleAddRepayment} />
+        <BottomNav onAddLoan={() => setShowAddLoan(true)} />
       </div>
     );
   }

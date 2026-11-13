@@ -98,7 +98,7 @@ function LoansContent() {
     const isSettled = loan.status === "settled";
 
     return (
-      <div className="min-h-dvh bg-[#0a0f1e] pb-8">
+      <div className="min-h-dvh bg-[#0a0f1e] pb-28">
         <div className="sticky top-0 z-30 bg-[#0a0f1e] border-b border-[#1e2d40] px-4 py-3 flex items-center gap-3">
           <button onClick={() => router.back()} className="w-8 h-8 rounded-full bg-[#161f2e] hover:bg-[#2a3547] flex items-center justify-center transition-colors">
             <ArrowLeft size={16} className="text-slate-300" />
@@ -192,6 +192,8 @@ function LoansContent() {
         </div>
 
         <AddRepaymentModal open={showRepayment} loan={loan} repayments={loanRepayments} onClose={() => setShowRepayment(false)} onSubmit={handleAddRepayment} />
+      <BottomNav onAddLoan={() => setShowAddLoan(true)} />
+      <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} />
       </div>
     );
   }
