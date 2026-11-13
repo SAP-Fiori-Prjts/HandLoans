@@ -34,9 +34,10 @@ export default function AddLoanModal({ open, onClose, onSubmit, defaultPersonNam
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Sync phone when defaultPhoneNumber loads after initial mount
+  // Sync phone when defaultPhoneNumber loads after initial mount (GAS data arrives async)
   useEffect(() => {
-    if (defaultPhoneNumber) setPhoneNumber(phoneToDisplay(defaultPhoneNumber));
+    const display = defaultPhoneNumber ? phoneToDisplay(defaultPhoneNumber) : "";
+    if (display) setPhoneNumber(display);
   }, [defaultPhoneNumber]);
 
   const reset = () => {

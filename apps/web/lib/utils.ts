@@ -193,6 +193,11 @@ export function buildPersonBalances(
     const entry = map.get(loan.personName)!;
     entry.loans.push(loan);
 
+    // Keep the first non-empty phone number found across all loans
+    if (!entry.phoneNumber && loan.phoneNumber) {
+      entry.phoneNumber = loan.phoneNumber;
+    }
+
     if (isActive) {
       entry.activeLoans += 1;
       const effective = Math.max(0, remaining);
