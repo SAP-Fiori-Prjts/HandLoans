@@ -1,0 +1,73 @@
+@import "tailwindcss";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+
+:root {
+  --bg-page: #0a0f1e;
+  --bg-card: #111827;
+  --bg-elevated: #1e293b;
+  --color-positive: #10b981;
+  --color-negative: #f43f5e;
+  --color-accent: #6366f1;
+}
+
+* {
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: #f8fafc;
+  min-height: 100dvh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 2px;
+}
+
+/* Bottom sheet modal */
+.bottom-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+}
+
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #111827;
+  border-top-left-radius: 1.5rem;
+  border-top-right-radius: 1.5rem;
+  z-index: 51;
+  padding: 1.5rem;
+  max-height: 90dvh;
+  overflow-y: auto;
+}
+
+@media (min-width: 640px) {
+  .bottom-sheet {
+    max-width: 480px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 1.5rem;
+    bottom: auto;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 85vh;
+  }
+}
