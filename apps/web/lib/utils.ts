@@ -9,6 +9,9 @@ export function formatDate(dateStr: string): string {
     const isoDate = dateStr.substring(0, 10);
     const parsed2 = parse(isoDate, "yyyy-MM-dd", new Date());
     if (isValid(parsed2)) return format(parsed2, "dd MMM yyyy");
+    // Fallback: JS Date string e.g. "Thu Jun 11 2026 00:00:00 GMT+0530 ..."
+    const fallback = new Date(dateStr);
+    if (isValid(fallback)) return format(fallback, "dd MMM yyyy");
     return dateStr;
   } catch {
     return dateStr;
@@ -24,6 +27,10 @@ export function formatRelativeDate(dateStr: string): string {
     else {
       const parsed2 = parse(dateStr.substring(0, 10), "yyyy-MM-dd", new Date());
       if (isValid(parsed2)) date = parsed2;
+      else {
+        const fallback = new Date(dateStr);
+        if (isValid(fallback)) date = fallback;
+      }
     }
     if (!date) return dateStr;
 
@@ -58,10 +65,12 @@ export function toInputDate(dateStr: string): string {
   try {
     const parsed = parse(dateStr, "dd/MM/yyyy", new Date());
     if (isValid(parsed)) return format(parsed, "yyyy-MM-dd");
-    // Fallback: ISO string
     const isoDate = dateStr.substring(0, 10);
     const parsed2 = parse(isoDate, "yyyy-MM-dd", new Date());
     if (isValid(parsed2)) return isoDate;
+    // Fallback: JS Date string
+    const fallback = new Date(dateStr);
+    if (isValid(fallback)) return format(fallback, "yyyy-MM-dd");
     return "";
   } catch { return ""; }
 }
