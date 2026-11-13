@@ -59,6 +59,24 @@ function formatDateValue(val) {
   }
 }
 
+// Parses a "dd/MM/yyyy" string into a Date object for unambiguous sheet storage.
+// Storing a Date avoids locale-dependent parsing that can swap day and month
+// when the spreadsheet locale differs from dd/MM/yyyy (e.g. US locale).
+function parseDMYtoDate(str) {
+  if (!str) return new Date();
+  var parts = str.split("/");
+  if (parts.length === 3) {
+    var d = parseInt(parts[0], 10);
+    var m = parseInt(parts[1], 10) - 1; // months are 0-based
+    var y = parseInt(parts[2], 10);
+    if (!isNaN(d) && !isNaN(m) && !isNaN(y)) {
+      return new Date(y, m, d);
+    }
+  }
+  // Fallback: return today
+  return new Date();
+}
+
 function generateId(sheet, prefix) {
   var rows = sheet.getDataRange().getValues().slice(1);
   var nums = rows
@@ -103,7 +121,7 @@ function addLoan(p) {
     p.personName,
     p.direction,
     p.amount,
-    p.date || today(),
+    parseDMYtoDate(p.date || today()),
     "active",
     p.reason || "",
     p.phoneNumber || ""
@@ -148,7 +166,7 @@ function addRepayment(p) {
     id,
     p.loanId,
     p.amount,
-    p.date || today(),
+    parseDMYtoDate(p.date || today()),
     p.note    || "",
     p.comment || ""
   ]);

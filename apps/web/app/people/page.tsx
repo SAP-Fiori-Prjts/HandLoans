@@ -3,19 +3,19 @@
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Phone, MessageCircle, Plus } from "lucide-react";
-import { getLoans, getRepayments, addLoan, addRepayment } from "@/lib/api";
+import { getLoans, getRepayments, addLoan } from "@/lib/api";
 import {
   buildPersonBalances, formatCurrency, buildCallUrl,
   buildWhatsAppUrl, getInitials, getAvatarColor, phoneToDisplay,
 } from "@/lib/utils";
-import type { Loan, Repayment, AddLoanPayload, AddRepaymentPayload } from "@/lib/types";
+import type { Loan, Repayment, AddLoanPayload } from "@/lib/types";
 import BalanceCard from "@/components/BalanceCard";
 import LoanCard from "@/components/LoanCard";
 import BottomNav from "@/components/BottomNav";
 import AddLoanModal from "@/components/AddLoanModal";
-import AddRepaymentModal from "@/components/AddRepaymentModal";
 import Toast from "@/components/Toast";
 import { AnimatePresence } from "framer-motion";
+
 
 function PeopleContent() {
   const router = useRouter();
@@ -26,7 +26,6 @@ function PeopleContent() {
   const [repayments, setRepayments] = useState<Repayment[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddLoan, setShowAddLoan] = useState(false);
-  const [repaymentLoan, setRepaymentLoan] = useState<Loan | null>(null);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   const loadData = useCallback(async () => {
@@ -45,16 +44,6 @@ function PeopleContent() {
       setToast({ message: "Loan added", type: "success" });
     } catch {
       setToast({ message: "Failed to add loan", type: "error" });
-    }
-  };
-
-  const handleAddRepayment = async (payload: AddRepaymentPayload) => {
-    try {
-      await addRepayment(payload);
-      await loadData();
-      setToast({ message: "Repayment recorded", type: "success" });
-    } catch {
-      setToast({ message: "Failed to record repayment", type: "error" });
     }
   };
 
@@ -172,7 +161,6 @@ function PeopleContent() {
         </div>
 
         <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} defaultPersonName={personName} />
-        <AddRepaymentModal open={!!repaymentLoan} loan={repaymentLoan} repayments={repayments} onClose={() => setRepaymentLoan(null)} onSubmit={handleAddRepayment} />
         <BottomNav onAddLoan={() => setShowAddLoan(true)} />
         <AnimatePresence>{toast && <Toast message={toast.message} type={toast.type} onDone={() => setToast(null)} />}</AnimatePresence>
       </div>

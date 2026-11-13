@@ -49,7 +49,6 @@ export default function DashboardPage() {
 
   const positiveBalances = balances.filter((b) => b.netAmount > 0);
   const negativeBalances = balances.filter((b) => b.netAmount < 0);
-  const zeroBalances = balances.filter((b) => b.netAmount === 0 && b.loans.length > 0);
 
   const handlePersonClick = (person: PersonBalance) => {
     router.push(`/people?name=${encodeURIComponent(person.personName)}`);
@@ -115,18 +114,6 @@ export default function DashboardPage() {
               </section>
             )}
 
-            {zeroBalances.length > 0 && (
-              <section>
-                <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
-                  Settled
-                </h2>
-                <div className="space-y-3">
-                  {zeroBalances.map((p) => (
-                    <BalanceCard key={p.personName} person={p} onClick={() => handlePersonClick(p)} />
-                  ))}
-                </div>
-              </section>
-            )}
           </>
         )}
       </main>
