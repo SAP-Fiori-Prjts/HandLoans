@@ -6,7 +6,6 @@ import { Home, List, Plus, Users } from "lucide-react";
 
 interface BottomNavProps {
   onAddLoan: () => void;
-  activeLoanCount?: number;
 }
 
 const NAV_ITEMS = [
@@ -15,7 +14,7 @@ const NAV_ITEMS = [
   { href: "/people", icon: Users, label: "People" },
 ];
 
-export default function BottomNav({ onAddLoan, activeLoanCount }: BottomNavProps) {
+export default function BottomNav({ onAddLoan }: BottomNavProps) {
   const pathname = usePathname();
 
   return (
@@ -23,7 +22,6 @@ export default function BottomNav({ onAddLoan, activeLoanCount }: BottomNavProps
       <div className="max-w-lg mx-auto flex items-center justify-around px-2 pb-safe">
         {NAV_ITEMS.slice(0, 2).map(({ href, icon: Icon, label }) => {
           const active = pathname === href || (href === "/loans" && pathname.startsWith("/loans"));
-          const showBadge = href === "/loans" && activeLoanCount && activeLoanCount > 0;
           return (
             <Link
               key={href}
@@ -34,11 +32,6 @@ export default function BottomNav({ onAddLoan, activeLoanCount }: BottomNavProps
             >
               <div className="relative">
                 <Icon size={20} />
-                {showBadge && (
-                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 bg-indigo-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-1">
-                    {activeLoanCount > 99 ? "99+" : activeLoanCount}
-                  </span>
-                )}
               </div>
               <span className="text-[10px] font-medium">{label}</span>
               {active && (

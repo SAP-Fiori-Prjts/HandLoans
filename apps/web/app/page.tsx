@@ -42,7 +42,6 @@ export default function DashboardPage() {
   const totalLent = balances.reduce((s, b) => s + b.totalLent, 0);
   const totalBorrowed = balances.reduce((s, b) => s + b.totalBorrowed, 0);
   const net = totalLent - totalBorrowed;
-  const activeLoanCount = loans.filter((l) => l.status === "active").length;
 
   const positiveBalances = balances.filter((b) => b.netAmount > 0);
   const negativeBalances = balances.filter((b) => b.netAmount < 0);
@@ -128,7 +127,7 @@ export default function DashboardPage() {
         )}
       </main>
 
-      <BottomNav onAddLoan={() => setShowAddLoan(true)} activeLoanCount={activeLoanCount} />
+      <BottomNav onAddLoan={() => setShowAddLoan(true)} />
 
       <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} />
 

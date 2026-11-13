@@ -197,7 +197,7 @@ function LoansContent() {
         </div>
 
         <AddRepaymentModal open={showRepayment} loan={loan} repayments={loanRepayments} onClose={() => setShowRepayment(false)} onSubmit={handleAddRepayment} />
-      <BottomNav onAddLoan={() => setShowAddLoan(true)} activeLoanCount={loans.filter(l => l.status === "active").length} />
+      <BottomNav onAddLoan={() => setShowAddLoan(true)} />
       <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} />
       <AnimatePresence>{toast && <Toast message={toast.message} type={toast.type} onDone={() => setToast(null)} />}</AnimatePresence>
       </div>
@@ -239,7 +239,7 @@ function LoansContent() {
         )}
       </main>
 
-      <BottomNav onAddLoan={() => setShowAddLoan(true)} activeLoanCount={loans.filter(l => l.status === "active").length} />
+      <BottomNav onAddLoan={() => setShowAddLoan(true)} />
       <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} />
       <AnimatePresence>{toast && <Toast message={toast.message} type={toast.type} onDone={() => setToast(null)} />}</AnimatePresence>
     </div>
