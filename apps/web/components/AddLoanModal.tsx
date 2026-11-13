@@ -4,7 +4,7 @@ import { useState } from "react";
 import { X, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { AddLoanPayload } from "@/lib/types";
-import { today, phoneToStorage, toInputDate, fromInputDate } from "@/lib/utils";
+import { today, phoneToStorage } from "@/lib/utils";
 
 interface AddLoanModalProps {
   open: boolean;
@@ -20,6 +20,21 @@ function validateIndianPhone(phone: string): string | null {
   if (digits.length === 10 && /^[6-9]/.test(digits)) return null;
   if (digits.length === 12 && digits.startsWith("91") && /^[6-9]/.test(digits[2])) return null;
   return "Enter a valid 10-digit Indian mobile number (starting with 6–9)";
+}
+
+// Auto-formats digits to DD/MM/YYYY as user types
+function autoFormatDate(raw: string): string {
+  const digits = raw.replace(/\D/g, "").slice(0, 8);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+}
+
+function validateDate(d: string): boolean {
+  if (!/^\d{2}\/\d{2}\/\d{4}$/.test(d)) return false;
+  const [dd, mm, yyyy] = d.split("/").map(Number);
+  if (mm < 1 || mm > 12 || dd < 1 || dd > 31 || yyyy < 2000) return false;
+  return true;
 }
 
 export default function AddLoanModal({ open, onClose, onSubmit, defaultPersonName }: AddLoanModalProps) {
@@ -55,6 +70,7 @@ export default function AddLoanModal({ open, onClose, onSubmit, defaultPersonNam
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!personName.trim() || !amount) return;
+    if (!validateDate(date)) return;
 
     const phoneErr = validateIndianPhone(phoneNumber);
     if (phoneErr) {
@@ -187,10 +203,15 @@ export default function AddLoanModal({ open, onClose, onSubmit, defaultPersonNam
                       Date
                     </label>
                     <input
-                      type="date"
-                      value={toInputDate(date)}
-                      onChange={(e) => setDate(fromInputDate(e.target.value))}
-                      className="w-full bg-[#161f2e] border border-[#2a3547] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)] transition-all [color-scheme:dark]"
+                      type="text"
+                      inputMode="numeric"
+                      value={date}
+                      onChange={(e) => setDate(autoFormatDate(e.target.value))}
+                      placeholder="DD/MM/YYYY"
+                      maxLength={10}
+                      className={`w-full bg-[#161f2e] border rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)] transition-all ${
+                        date && !validateDate(date) ? "border-rose-500" : "border-[#2a3547]"
+                      }`}
                     />
                   </div>
                   <div>
