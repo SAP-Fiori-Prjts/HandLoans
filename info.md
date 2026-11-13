@@ -1,3 +1,7 @@
+# V4: https://script.google.com/macros/s/AKfycbx_GLWl_2CFlWVZ2qrMnKc4Pq9qjtxJvdZ1w-RcHwyag46gvCzNzHZg3gl9reURV_ZfEQ/exec
+# V3: https://script.google.com/macros/s/AKfycbzNl7M5pg_o_O42q4zmbBs3rJVa9lJEoTeFN1KY1w_DqQSOvXFakTcXjNqOgkEpR_BrnA/exec
+
+
 // HandLoans — Google Apps Script Web App
 // Sheet: Loans  (A:ID, B:Person Name, C:Direction, D:Amount, E:Date, F:Status, G:Reason, H:Phone Number)
 // Sheet: Repayments  (A:ID, B:Loan ID, C:Amount, D:Date, E:Note, F:Comment)
