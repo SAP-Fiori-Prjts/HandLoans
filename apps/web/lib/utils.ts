@@ -5,13 +5,13 @@ export function formatDate(dateStr: string): string {
   if (!dateStr) return "";
   try {
     const parsed = parse(dateStr, "dd/MM/yyyy", new Date());
-    if (isValid(parsed)) return format(parsed, "dd MMM yyyy");
+    if (isValid(parsed)) return format(parsed, "dd/MM/yyyy");
     const isoDate = dateStr.substring(0, 10);
     const parsed2 = parse(isoDate, "yyyy-MM-dd", new Date());
-    if (isValid(parsed2)) return format(parsed2, "dd MMM yyyy");
+    if (isValid(parsed2)) return format(parsed2, "dd/MM/yyyy");
     // Fallback: JS Date string e.g. "Thu Jun 11 2026 00:00:00 GMT+0530 ..."
     const fallback = new Date(dateStr);
-    if (isValid(fallback)) return format(fallback, "dd MMM yyyy");
+    if (isValid(fallback)) return format(fallback, "dd/MM/yyyy");
     return dateStr;
   } catch {
     return dateStr;
@@ -50,7 +50,7 @@ export function formatRelativeDate(dateStr: string): string {
       const m = Math.round(diffDays / 30);
       return `${m} month${m > 1 ? "s" : ""} ago`;
     }
-    return format(date, "dd MMM yyyy");
+    return format(date, "dd/MM/yyyy");
   } catch {
     return dateStr;
   }
@@ -90,6 +90,26 @@ export function formatCurrency(amount: number): string {
     currency: "INR",
     maximumFractionDigits: 0,
   }).format(Math.abs(amount));
+}
+
+const AVATAR_COLORS = [
+  { bg: "#1e3a5f", text: "#60a5fa" }, // blue
+  { bg: "#3b1f5e", text: "#c084fc" }, // purple
+  { bg: "#1a3a2a", text: "#34d399" }, // emerald
+  { bg: "#4a1f1f", text: "#f87171" }, // red
+  { bg: "#3a2a0f", text: "#fbbf24" }, // amber
+  { bg: "#1a3a3a", text: "#22d3ee" }, // cyan
+  { bg: "#3a1a2a", text: "#f472b6" }, // pink
+  { bg: "#2a3a1a", text: "#86efac" }, // lime
+];
+
+export function getAvatarColor(name: string): { bg: string; text: string } {
+  if (!name) return AVATAR_COLORS[0];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash * 31 + name.charCodeAt(i)) & 0x7fffffff;
+  }
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
 }
 
 export function getInitials(name: string): string {

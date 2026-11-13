@@ -6,7 +6,7 @@ import { ArrowLeft, Phone, MessageCircle, Plus } from "lucide-react";
 import { getLoans, getRepayments, addLoan, addRepayment } from "@/lib/api";
 import {
   buildPersonBalances, formatCurrency, buildCallUrl,
-  buildWhatsAppUrl, getInitials, phoneToDisplay,
+  buildWhatsAppUrl, getInitials, getAvatarColor, phoneToDisplay,
 } from "@/lib/utils";
 import type { Loan, Repayment, AddLoanPayload, AddRepaymentPayload } from "@/lib/types";
 import BalanceCard from "@/components/BalanceCard";
@@ -70,7 +70,10 @@ function PeopleContent() {
           {!loading && person && (
             <div className={`rounded-2xl border p-5 ${isPositive ? "bg-emerald-500/5 border-emerald-500/20" : "bg-rose-500/5 border-rose-500/20"}`}>
               <div className="flex items-center gap-4">
-                <div className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold ${isPositive ? "bg-emerald-500/20 text-emerald-300" : "bg-rose-500/20 text-rose-300"}`}>
+                <div
+                  className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold"
+                  style={{ backgroundColor: getAvatarColor(personName).bg, color: getAvatarColor(personName).text }}
+                >
                   {getInitials(personName)}
                 </div>
                 <div className="flex-1">

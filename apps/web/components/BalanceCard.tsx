@@ -5,6 +5,7 @@ import type { PersonBalance } from "@/lib/types";
 import {
   formatCurrency,
   getInitials,
+  getAvatarColor,
   buildWhatsAppUrl,
   buildCallUrl,
   phoneToDisplay,
@@ -17,6 +18,7 @@ interface BalanceCardProps {
 
 export default function BalanceCard({ person, onClick }: BalanceCardProps) {
   const isPositive = person.netAmount >= 0;
+  const avatarColor = getAvatarColor(person.personName);
 
   return (
     <div
@@ -41,11 +43,8 @@ export default function BalanceCard({ person, onClick }: BalanceCardProps) {
           {/* Avatar + Name */}
           <div className="flex items-center gap-3">
             <div
-              className={`w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-                isPositive
-                  ? "bg-[#1a3a2a] text-emerald-300"
-                  : "bg-[#3a1a1e] text-rose-300"
-              }`}
+              className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
+              style={{ backgroundColor: avatarColor.bg, color: avatarColor.text }}
             >
               {getInitials(person.personName)}
             </div>
