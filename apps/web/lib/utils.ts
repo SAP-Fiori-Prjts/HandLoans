@@ -4,10 +4,13 @@ import type { Loan, Repayment, PersonBalance } from "./types";
 export function formatDate(dateStr: string): string {
   if (!dateStr) return "";
   try {
+    // Primary: "dd/MM/yyyy" (what GAS always returns now)
     const parsed = parse(dateStr, "dd/MM/yyyy", new Date());
     if (isValid(parsed)) return format(parsed, "dd MMM yyyy");
-    const fallback = new Date(dateStr);
-    if (isValid(fallback)) return format(fallback, "dd MMM yyyy");
+    // Fallback: ISO string "yyyy-MM-dd" or "yyyy-MM-ddTHH:mm:ss.sssZ"
+    const isoDate = dateStr.substring(0, 10); // take "yyyy-MM-dd" part
+    const parsed2 = parse(isoDate, "yyyy-MM-dd", new Date());
+    if (isValid(parsed2)) return format(parsed2, "dd MMM yyyy");
     return dateStr;
   } catch {
     return dateStr;
@@ -23,8 +26,10 @@ export function toInputDate(dateStr: string): string {
   try {
     const parsed = parse(dateStr, "dd/MM/yyyy", new Date());
     if (isValid(parsed)) return format(parsed, "yyyy-MM-dd");
-    const fallback = new Date(dateStr);
-    if (isValid(fallback)) return format(fallback, "yyyy-MM-dd");
+    // Fallback: ISO string
+    const isoDate = dateStr.substring(0, 10);
+    const parsed2 = parse(isoDate, "yyyy-MM-dd", new Date());
+    if (isValid(parsed2)) return isoDate;
     return "";
   } catch { return ""; }
 }

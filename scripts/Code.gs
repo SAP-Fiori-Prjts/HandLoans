@@ -46,15 +46,17 @@ function getSheet(name) {
   return SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(name);
 }
 
-function sheetToObjects(sheet) {
-  var rows = sheet.getDataRange().getValues();
-  if (rows.length < 2) return [];
-  var headers = rows[0];
-  return rows.slice(1).map(function(row) {
-    var obj = {};
-    headers.forEach(function(h, i) { obj[h] = row[i]; });
-    return obj;
-  });
+// Always returns date as "dd/MM/yyyy" string regardless of cell type
+function formatDateValue(val) {
+  if (!val) return "";
+  try {
+    if (val instanceof Date) {
+      return Utilities.formatDate(val, Session.getScriptTimeZone(), "dd/MM/yyyy");
+    }
+    return String(val);
+  } catch (e) {
+    return String(val);
+  }
 }
 
 function generateId(sheet, prefix) {
@@ -70,26 +72,25 @@ function generateId(sheet, prefix) {
 
 function today() {
   var d = new Date();
-  var dd = String(d.getDate()).padStart(2, "0");
-  var mm = String(d.getMonth() + 1).padStart(2, "0");
-  var yyyy = d.getFullYear();
-  return dd + "/" + mm + "/" + yyyy;
+  return Utilities.formatDate(d, Session.getScriptTimeZone(), "dd/MM/yyyy");
 }
 
 // ─── Loans ───────────────────────────────────────────────────────────────────
 
 function getLoans() {
-  var rows = sheetToObjects(getSheet(LOANS_SHEET));
-  return rows.map(function(r) {
+  var rows = getSheet(LOANS_SHEET).getDataRange().getValues();
+  if (rows.length < 2) return [];
+  // Map by column index so header names don't need to match exactly
+  return rows.slice(1).map(function(row) {
     return {
-      id:          r["ID"],
-      personName:  r["Person Name"],
-      direction:   r["Direction"],
-      amount:      Number(r["Amount"]),
-      date:        r["Date"],
-      status:      r["Status"],
-      reason:      r["Reason"],
-      phoneNumber: r["Phone Number"]
+      id:          String(row[0] || ""),
+      personName:  String(row[1] || ""),
+      direction:   String(row[2] || ""),
+      amount:      Number(row[3]) || 0,
+      date:        formatDateValue(row[4]),
+      status:      String(row[5] || "active"),
+      reason:      String(row[6] || ""),
+      phoneNumber: String(row[7] || "")
     };
   });
 }
@@ -125,15 +126,17 @@ function updateStatus(p) {
 // ─── Repayments ──────────────────────────────────────────────────────────────
 
 function getRepayments() {
-  var rows = sheetToObjects(getSheet(REP_SHEET));
-  return rows.map(function(r) {
+  var rows = getSheet(REP_SHEET).getDataRange().getValues();
+  if (rows.length < 2) return [];
+  // Map by column index so header names don't need to match exactly
+  return rows.slice(1).map(function(row) {
     return {
-      id:      r["ID"],
-      loanId:  r["Loan ID"],
-      amount:  Number(r["Amount"]),
-      date:    r["Date"],
-      note:    r["Note"],
-      comment: r["Comment"]
+      id:      String(row[0] || ""),
+      loanId:  String(row[1] || ""),
+      amount:  Number(row[2]) || 0,
+      date:    formatDateValue(row[3]),
+      note:    String(row[4] || ""),
+      comment: String(row[5] || "")
     };
   });
 }
@@ -168,3 +171,4 @@ function autoSettleIfPaid(loanId) {
     updateStatus({ loanId: loanId, status: "settled" });
   }
 }
+
