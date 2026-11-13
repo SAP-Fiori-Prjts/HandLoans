@@ -77,6 +77,22 @@ export default function BalanceCard({ person, onClick }: BalanceCardProps) {
           </div>
         </div>
 
+        {/* Repayment progress bar (shown when some amount has been repaid) */}
+        {isPositive && person.totalRepaid > 0 && (
+          <div className="mt-3">
+            <div className="flex justify-between text-[10px] text-slate-500 mb-1">
+              <span>Repaid {formatCurrency(person.totalRepaid)}</span>
+              <span>{Math.round((person.totalRepaid / (person.totalLent + person.totalRepaid)) * 100)}%</span>
+            </div>
+            <div className="h-1.5 bg-[#1e2d40] rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-full transition-all duration-700"
+                style={{ width: `${Math.min(100, (person.totalRepaid / (person.totalLent + person.totalRepaid)) * 100)}%` }}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Phone actions */}
         {person.phoneNumber && (
           <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#2a3547]">

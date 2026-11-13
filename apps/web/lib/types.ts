@@ -24,6 +24,7 @@ export interface PersonBalance {
   netAmount: number;       // positive = they owe you, negative = you owe them
   totalLent: number;
   totalBorrowed: number;
+  totalRepaid: number;
   activeLoans: number;
   loans: Loan[];
 }

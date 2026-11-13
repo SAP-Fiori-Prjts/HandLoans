@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Phone, MessageCircle, CheckCircle, RotateCcw, Plus } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { getLoans, getRepayments, addLoan, addRepayment, updateLoanStatus } from "@/lib/api";
 import {
   formatCurrency, formatDate, calcLoanBalance, calcRepaymentProgress,
@@ -14,6 +14,7 @@ import LoanList from "@/components/LoanList";
 import BottomNav from "@/components/BottomNav";
 import AddLoanModal from "@/components/AddLoanModal";
 import AddRepaymentModal from "@/components/AddRepaymentModal";
+import Toast from "@/components/Toast";
 
 function LoansContent() {
   const router = useRouter();
@@ -26,6 +27,7 @@ function LoansContent() {
   const [showAddLoan, setShowAddLoan] = useState(false);
   const [showRepayment, setShowRepayment] = useState(false);
   const [settling, setSettling] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   const loadData = useCallback(async () => {
     const [l, r] = await Promise.all([getLoans(), getRepayments()]);
@@ -39,11 +41,13 @@ function LoansContent() {
   const handleAddLoan = async (payload: AddLoanPayload) => {
     await addLoan(payload);
     await loadData();
+    setToast({ message: "Loan added", type: "success" });
   };
 
   const handleAddRepayment = async (payload: AddRepaymentPayload) => {
     await addRepayment(payload);
     await loadData();
+    setToast({ message: "Repayment recorded", type: "success" });
   };
 
   const handleToggleSettle = async (loan: Loan) => {
@@ -68,6 +72,7 @@ function LoansContent() {
     }
     await loadData();
     setSettling(false);
+    setToast({ message: loan.status === "settled" ? "Loan reactivated" : "Loan settled", type: "success" });
   };
 
   // ── Loan Detail View ──────────────────────────────────────────────────────
@@ -192,8 +197,9 @@ function LoansContent() {
         </div>
 
         <AddRepaymentModal open={showRepayment} loan={loan} repayments={loanRepayments} onClose={() => setShowRepayment(false)} onSubmit={handleAddRepayment} />
-      <BottomNav onAddLoan={() => setShowAddLoan(true)} />
+      <BottomNav onAddLoan={() => setShowAddLoan(true)} activeLoanCount={loans.filter(l => l.status === "active").length} />
       <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} />
+      <AnimatePresence>{toast && <Toast message={toast.message} type={toast.type} onDone={() => setToast(null)} />}</AnimatePresence>
       </div>
     );
   }
@@ -218,8 +224,9 @@ function LoansContent() {
         )}
       </main>
 
-      <BottomNav onAddLoan={() => setShowAddLoan(true)} />
+      <BottomNav onAddLoan={() => setShowAddLoan(true)} activeLoanCount={loans.filter(l => l.status === "active").length} />
       <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} />
+      <AnimatePresence>{toast && <Toast message={toast.message} type={toast.type} onDone={() => setToast(null)} />}</AnimatePresence>
     </div>
   );
 }

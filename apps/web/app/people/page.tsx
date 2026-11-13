@@ -14,6 +14,8 @@ import LoanCard from "@/components/LoanCard";
 import BottomNav from "@/components/BottomNav";
 import AddLoanModal from "@/components/AddLoanModal";
 import AddRepaymentModal from "@/components/AddRepaymentModal";
+import Toast from "@/components/Toast";
+import { AnimatePresence } from "framer-motion";
 
 function PeopleContent() {
   const router = useRouter();
@@ -25,6 +27,7 @@ function PeopleContent() {
   const [loading, setLoading] = useState(true);
   const [showAddLoan, setShowAddLoan] = useState(false);
   const [repaymentLoan, setRepaymentLoan] = useState<Loan | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   const loadData = useCallback(async () => {
     const [l, r] = await Promise.all([getLoans(), getRepayments()]);
@@ -38,11 +41,13 @@ function PeopleContent() {
   const handleAddLoan = async (payload: AddLoanPayload) => {
     await addLoan({ ...payload, personName: personName || payload.personName });
     await loadData();
+    setToast({ message: "Loan added", type: "success" });
   };
 
   const handleAddRepayment = async (payload: AddRepaymentPayload) => {
     await addRepayment(payload);
     await loadData();
+    setToast({ message: "Repayment recorded", type: "success" });
   };
 
   // ── Person Detail View ────────────────────────────────────────────────────
@@ -113,7 +118,8 @@ function PeopleContent() {
 
         <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} defaultPersonName={personName} />
         <AddRepaymentModal open={!!repaymentLoan} loan={repaymentLoan} repayments={repayments} onClose={() => setRepaymentLoan(null)} onSubmit={handleAddRepayment} />
-        <BottomNav onAddLoan={() => setShowAddLoan(true)} />
+        <BottomNav onAddLoan={() => setShowAddLoan(true)} activeLoanCount={loans.filter(l => l.status === "active").length} />
+        <AnimatePresence>{toast && <Toast message={toast.message} type={toast.type} onDone={() => setToast(null)} />}</AnimatePresence>
       </div>
     );
   }
@@ -144,8 +150,9 @@ function PeopleContent() {
         )}
       </main>
 
-      <BottomNav onAddLoan={() => setShowAddLoan(true)} />
+      <BottomNav onAddLoan={() => setShowAddLoan(true)} activeLoanCount={loans.filter(l => l.status === "active").length} />
       <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} />
+      <AnimatePresence>{toast && <Toast message={toast.message} type={toast.type} onDone={() => setToast(null)} />}</AnimatePresence>
     </div>
   );
 }

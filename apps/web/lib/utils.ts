@@ -4,14 +4,46 @@ import type { Loan, Repayment, PersonBalance } from "./types";
 export function formatDate(dateStr: string): string {
   if (!dateStr) return "";
   try {
-    // Primary: "dd/MM/yyyy" (what GAS always returns now)
     const parsed = parse(dateStr, "dd/MM/yyyy", new Date());
     if (isValid(parsed)) return format(parsed, "dd MMM yyyy");
-    // Fallback: ISO string "yyyy-MM-dd" or "yyyy-MM-ddTHH:mm:ss.sssZ"
-    const isoDate = dateStr.substring(0, 10); // take "yyyy-MM-dd" part
+    const isoDate = dateStr.substring(0, 10);
     const parsed2 = parse(isoDate, "yyyy-MM-dd", new Date());
     if (isValid(parsed2)) return format(parsed2, "dd MMM yyyy");
     return dateStr;
+  } catch {
+    return dateStr;
+  }
+}
+
+export function formatRelativeDate(dateStr: string): string {
+  if (!dateStr) return "";
+  try {
+    let date: Date | null = null;
+    const parsed = parse(dateStr, "dd/MM/yyyy", new Date());
+    if (isValid(parsed)) date = parsed;
+    else {
+      const parsed2 = parse(dateStr.substring(0, 10), "yyyy-MM-dd", new Date());
+      if (isValid(parsed2)) date = parsed2;
+    }
+    if (!date) return dateStr;
+
+    const now = new Date();
+    const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const targetMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const diffDays = Math.round((todayMidnight.getTime() - targetMidnight.getTime()) / 86400000);
+
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) {
+      const w = Math.round(diffDays / 7);
+      return `${w} week${w > 1 ? "s" : ""} ago`;
+    }
+    if (diffDays < 365) {
+      const m = Math.round(diffDays / 30);
+      return `${m} month${m > 1 ? "s" : ""} ago`;
+    }
+    return format(date, "dd MMM yyyy");
   } catch {
     return dateStr;
   }
@@ -121,6 +153,7 @@ export function buildPersonBalances(
         netAmount: 0,
         totalLent: 0,
         totalBorrowed: 0,
+        totalRepaid: 0,
         activeLoans: 0,
         loans: [],
       });
@@ -139,6 +172,16 @@ export function buildPersonBalances(
         entry.totalBorrowed += remaining;
       }
     }
+  }
+
+  // Compute totalRepaid: sum of all repayments on lent loans for each person
+  for (const entry of map.values()) {
+    const lentIds = new Set(
+      entry.loans.filter((l) => l.direction === "lent").map((l) => l.id)
+    );
+    entry.totalRepaid = repayments
+      .filter((r) => lentIds.has(r.loanId))
+      .reduce((sum, r) => sum + r.amount, 0);
   }
 
   return Array.from(map.values()).sort((a, b) =>

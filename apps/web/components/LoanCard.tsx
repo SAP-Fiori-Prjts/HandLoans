@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowUpRight, ArrowDownLeft, ChevronRight } from "lucide-react";
 import type { Loan, Repayment } from "@/lib/types";
-import { formatCurrency, formatDate, calcLoanBalance, calcRepaymentProgress } from "@/lib/utils";
+import { formatCurrency, formatDate, formatRelativeDate, calcLoanBalance, calcRepaymentProgress } from "@/lib/utils";
 
 interface LoanCardProps {
   loan: Loan;
@@ -70,7 +70,7 @@ export default function LoanCard({ loan, repayments, showPerson = false }: LoanC
                       {loan.reason || "—"}
                     </p>
                   )}
-                  <span className="text-xs text-slate-400">{formatDate(loan.date)}</span>
+                  <span className="text-xs text-slate-400">{formatRelativeDate(loan.date)}</span>
                 </div>
 
                 <div className="flex items-center gap-2 flex-shrink-0">

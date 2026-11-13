@@ -6,6 +6,7 @@ import { Home, List, Plus, Users } from "lucide-react";
 
 interface BottomNavProps {
   onAddLoan: () => void;
+  activeLoanCount?: number;
 }
 
 const NAV_ITEMS = [
@@ -14,14 +15,15 @@ const NAV_ITEMS = [
   { href: "/people", icon: Users, label: "People" },
 ];
 
-export default function BottomNav({ onAddLoan }: BottomNavProps) {
+export default function BottomNav({ onAddLoan, activeLoanCount }: BottomNavProps) {
   const pathname = usePathname();
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#0d1526] border-t border-[#1e2d40]">
       <div className="max-w-lg mx-auto flex items-center justify-around px-2 pb-safe">
         {NAV_ITEMS.slice(0, 2).map(({ href, icon: Icon, label }) => {
-          const active = pathname === href;
+          const active = pathname === href || (href === "/loans" && pathname.startsWith("/loans"));
+          const showBadge = href === "/loans" && activeLoanCount && activeLoanCount > 0;
           return (
             <Link
               key={href}
@@ -30,7 +32,14 @@ export default function BottomNav({ onAddLoan }: BottomNavProps) {
                 active ? "text-indigo-400" : "text-slate-500 hover:text-slate-300"
               }`}
             >
-              <Icon size={20} />
+              <div className="relative">
+                <Icon size={20} />
+                {showBadge && (
+                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 bg-indigo-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-1">
+                    {activeLoanCount > 99 ? "99+" : activeLoanCount}
+                  </span>
+                )}
+              </div>
               <span className="text-[10px] font-medium">{label}</span>
               {active && (
                 <span className="w-1 h-1 rounded-full bg-indigo-500 mx-auto mt-0.5" />
@@ -49,7 +58,7 @@ export default function BottomNav({ onAddLoan }: BottomNavProps) {
         </button>
 
         {NAV_ITEMS.slice(2).map(({ href, icon: Icon, label }) => {
-          const active = pathname === href;
+          const active = pathname === href || pathname.startsWith(href + "?");
           return (
             <Link
               key={href}
