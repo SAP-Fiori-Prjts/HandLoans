@@ -18,7 +18,7 @@ export default function LoanCard({ loan, repayments, showPerson = false }: LoanC
   const isSettled = loan.status === "settled";
 
   return (
-    <Link href={`/loans/${loan.id}`} className="block text-white no-underline">
+    <Link href={`/loans?id=${loan.id}`} className="block text-white no-underline">
       <div
         className={`relative rounded-xl border transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] overflow-hidden ${
           isSettled

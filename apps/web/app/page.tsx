@@ -42,7 +42,7 @@ export default function DashboardPage() {
   const zeroBalances = balances.filter((b) => b.netAmount === 0 && b.loans.length > 0);
 
   const handlePersonClick = (person: PersonBalance) => {
-    router.push(`/people/${encodeURIComponent(person.personName)}`);
+    router.push(`/people?name=${encodeURIComponent(person.personName)}`);
   };
 
   return (
