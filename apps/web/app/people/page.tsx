@@ -160,7 +160,7 @@ function PeopleContent() {
           </section>
         </div>
 
-        <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} defaultPersonName={personName} />
+        <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} defaultPersonName={personName} defaultPhoneNumber={person?.phoneNumber} />
         <BottomNav onAddLoan={() => setShowAddLoan(true)} />
         <AnimatePresence>{toast && <Toast message={toast.message} type={toast.type} onDone={() => setToast(null)} />}</AnimatePresence>
       </div>

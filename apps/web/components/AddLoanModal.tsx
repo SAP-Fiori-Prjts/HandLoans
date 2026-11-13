@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { AddLoanPayload } from "@/lib/types";
-import { today, phoneToStorage, toInputDate, fromInputDate } from "@/lib/utils";
+import { today, phoneToStorage, phoneToDisplay, toInputDate, fromInputDate } from "@/lib/utils";
 
 interface AddLoanModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (payload: AddLoanPayload) => Promise<void>;
   defaultPersonName?: string;
+  defaultPhoneNumber?: string;
 }
 
 // Accepts: 9876543210 | +91 9876543210 | 91 9876543210 | +919876543210
@@ -22,15 +23,21 @@ function validateIndianPhone(phone: string): string | null {
   return "Enter a valid 10-digit Indian mobile number (starting with 6–9)";
 }
 
-export default function AddLoanModal({ open, onClose, onSubmit, defaultPersonName }: AddLoanModalProps) {
+export default function AddLoanModal({ open, onClose, onSubmit, defaultPersonName, defaultPhoneNumber }: AddLoanModalProps) {
   const [direction, setDirection] = useState<"lent" | "borrowed">("lent");
   const [personName, setPersonName] = useState(defaultPersonName ?? "");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(today());
   const [reason, setReason] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("+91 ");
+  const defaultPhone = defaultPhoneNumber ? phoneToDisplay(defaultPhoneNumber) : "+91 ";
+  const [phoneNumber, setPhoneNumber] = useState(defaultPhone);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Sync phone when defaultPhoneNumber loads after initial mount
+  useEffect(() => {
+    if (defaultPhoneNumber) setPhoneNumber(phoneToDisplay(defaultPhoneNumber));
+  }, [defaultPhoneNumber]);
 
   const reset = () => {
     setDirection("lent");
@@ -38,7 +45,7 @@ export default function AddLoanModal({ open, onClose, onSubmit, defaultPersonNam
     setAmount("");
     setDate(today());
     setReason("");
-    setPhoneNumber("+91 ");
+    setPhoneNumber(defaultPhone);
     setPhoneError(null);
   };
 
@@ -210,10 +217,13 @@ export default function AddLoanModal({ open, onClose, onSubmit, defaultPersonNam
                       onChange={(e) => handlePhoneChange(e.target.value)}
                       onBlur={() => setPhoneError(validateIndianPhone(phoneNumber))}
                       placeholder="+91 98765 43210"
-                      className={`w-full bg-[#161f2e] border rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none transition-all ${
-                        phoneError
-                          ? "border-rose-500 focus:border-rose-500 focus:shadow-[0_0_0_3px_rgba(244,63,94,0.15)]"
-                          : "border-[#2a3547] focus:border-indigo-500 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)]"
+                      readOnly={!!defaultPhoneNumber}
+                      className={`w-full border rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none transition-all ${
+                        defaultPhoneNumber
+                          ? "bg-[#1e2d40] border-[#2a3547] cursor-default"
+                          : phoneError
+                          ? "bg-[#161f2e] border-rose-500 focus:border-rose-500 focus:shadow-[0_0_0_3px_rgba(244,63,94,0.15)]"
+                          : "bg-[#161f2e] border-[#2a3547] focus:border-indigo-500 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)]"
                       }`}
                     />
                   </div>
