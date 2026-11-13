@@ -58,6 +58,7 @@ export default function AddRepaymentModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!loan || !amount) return;
+    if (isNaN(enteredAmount) || enteredAmount <= 0 || enteredAmount > remaining) return;
     setLoading(true);
     try {
       await onSubmit({

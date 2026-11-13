@@ -124,9 +124,10 @@ export function getInitials(name: string): string {
 
 export function buildWhatsAppUrl(phone: string | undefined | null): string {
   const digits = String(phone ?? "").replace(/\D/g, "");
+  if (!digits) return "";
   if (digits.length === 10) return `https://wa.me/91${digits}`;
   if (digits.length === 12 && digits.startsWith("91")) return `https://wa.me/${digits}`;
-  return `https://wa.me/${digits}`;
+  return "";
 }
 
 export function buildCallUrl(phone: string | undefined | null): string {
@@ -159,6 +160,7 @@ export function calcLoanBalance(loan: Loan, repayments: Repayment[]): number {
 }
 
 export function calcRepaymentProgress(loan: Loan, repayments: Repayment[]): number {
+  if (loan.amount === 0) return 0;
   const paid = repayments
     .filter((r) => r.loanId === loan.id)
     .reduce((sum, r) => sum + r.amount, 0);
@@ -193,12 +195,13 @@ export function buildPersonBalances(
 
     if (isActive) {
       entry.activeLoans += 1;
+      const effective = Math.max(0, remaining);
       if (loan.direction === "lent") {
-        entry.netAmount += remaining;
-        entry.totalLent += remaining;
+        entry.netAmount += effective;
+        entry.totalLent += effective;
       } else {
-        entry.netAmount -= remaining;
-        entry.totalBorrowed += remaining;
+        entry.netAmount -= effective;
+        entry.totalBorrowed += effective;
       }
     }
   }

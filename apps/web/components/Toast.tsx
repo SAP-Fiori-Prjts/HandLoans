@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, AlertCircle } from "lucide-react";
 
@@ -11,10 +11,13 @@ interface ToastProps {
 }
 
 export default function Toast({ message, type = "success", onDone }: ToastProps) {
+  const onDoneRef = useRef(onDone);
+  useEffect(() => { onDoneRef.current = onDone; }, [onDone]);
+  // Fire exactly once on mount — not affected by parent re-renders creating new onDone refs
   useEffect(() => {
-    const t = setTimeout(onDone, 2500);
+    const t = setTimeout(() => onDoneRef.current(), 2500);
     return () => clearTimeout(t);
-  }, [onDone]);
+  }, []);
 
   return (
     <motion.div

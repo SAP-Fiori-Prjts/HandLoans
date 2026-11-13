@@ -1,5 +1,5 @@
 import type { Loan, Repayment, AddLoanPayload, AddRepaymentPayload } from "./types";
-import { today, generateId } from "./utils";
+import { generateId } from "./utils";
 
 const GAS_URL = process.env.NEXT_PUBLIC_GAS_URL;
 
