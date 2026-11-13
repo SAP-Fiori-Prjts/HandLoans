@@ -39,40 +39,53 @@ function LoansContent() {
   useEffect(() => { loadData(); }, [loadData]);
 
   const handleAddLoan = async (payload: AddLoanPayload) => {
-    await addLoan(payload);
-    await loadData();
-    setToast({ message: "Loan added", type: "success" });
+    try {
+      await addLoan(payload);
+      await loadData();
+      setToast({ message: "Loan added", type: "success" });
+    } catch {
+      setToast({ message: "Failed to add loan", type: "error" });
+    }
   };
 
   const handleAddRepayment = async (payload: AddRepaymentPayload) => {
-    await addRepayment(payload);
-    await loadData();
-    setToast({ message: "Repayment recorded", type: "success" });
+    try {
+      await addRepayment(payload);
+      await loadData();
+      setToast({ message: "Repayment recorded", type: "success" });
+    } catch {
+      setToast({ message: "Failed to record repayment", type: "error" });
+    }
   };
 
   const handleToggleSettle = async (loan: Loan) => {
     setSettling(true);
-    if (loan.status === "settled") {
-      await updateLoanStatus(loan.id, "active");
-    } else {
-      const loanRepayments = repayments.filter((r) => r.loanId === loan.id);
-      const remaining = calcLoanBalance(loan, loanRepayments);
-      if (remaining > 0) {
-        // Add a full repayment entry — backend auto-settles via autoSettleIfPaid
-        await addRepayment({
-          loanId: loan.id,
-          amount: remaining,
-          date: today(),
-          note: "Full",
-          comment: "Marked as settled",
-        });
+    try {
+      if (loan.status === "settled") {
+        await updateLoanStatus(loan.id, "active");
       } else {
-        await updateLoanStatus(loan.id, "settled");
+        const loanRepayments = repayments.filter((r) => r.loanId === loan.id);
+        const remaining = calcLoanBalance(loan, loanRepayments);
+        if (remaining > 0) {
+          // Add a full repayment entry — backend auto-settles via autoSettleIfPaid
+          await addRepayment({
+            loanId: loan.id,
+            amount: remaining,
+            date: today(),
+            note: "Full",
+            comment: "Marked as settled",
+          });
+        } else {
+          await updateLoanStatus(loan.id, "settled");
+        }
       }
+      await loadData();
+      setToast({ message: loan.status === "settled" ? "Loan reactivated" : "Loan settled", type: "success" });
+    } catch {
+      setToast({ message: "Failed to update loan status", type: "error" });
+    } finally {
+      setSettling(false);
     }
-    await loadData();
-    setSettling(false);
-    setToast({ message: loan.status === "settled" ? "Loan reactivated" : "Loan settled", type: "success" });
   };
 
   // ── Loan Detail View ──────────────────────────────────────────────────────

@@ -39,15 +39,23 @@ function PeopleContent() {
   useEffect(() => { loadData(); }, [loadData]);
 
   const handleAddLoan = async (payload: AddLoanPayload) => {
-    await addLoan({ ...payload, personName: personName || payload.personName });
-    await loadData();
-    setToast({ message: "Loan added", type: "success" });
+    try {
+      await addLoan({ ...payload, personName: personName || payload.personName });
+      await loadData();
+      setToast({ message: "Loan added", type: "success" });
+    } catch {
+      setToast({ message: "Failed to add loan", type: "error" });
+    }
   };
 
   const handleAddRepayment = async (payload: AddRepaymentPayload) => {
-    await addRepayment(payload);
-    await loadData();
-    setToast({ message: "Repayment recorded", type: "success" });
+    try {
+      await addRepayment(payload);
+      await loadData();
+      setToast({ message: "Repayment recorded", type: "success" });
+    } catch {
+      setToast({ message: "Failed to record repayment", type: "error" });
+    }
   };
 
   // ── Person Detail View ────────────────────────────────────────────────────
@@ -100,6 +108,7 @@ function PeopleContent() {
           )}
 
           {/* Stats row */}
+          {!loading && (
           <div className="grid grid-cols-3 gap-2">
             {(() => {
               const lentIds = new Set(personLoans.filter((l) => l.direction === "lent").map((l) => l.id));
@@ -123,6 +132,7 @@ function PeopleContent() {
               );
             })()}
           </div>
+          )}
 
           <button onClick={() => setShowAddLoan(true)} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm font-semibold">
             <Plus size={16} /> New Loan

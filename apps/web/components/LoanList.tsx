@@ -28,7 +28,12 @@ export default function LoanList({ loans, repayments, showPerson = false }: Loan
     .sort((a, b) => {
       if (a.status === "settled" && b.status !== "settled") return 1;
       if (a.status !== "settled" && b.status === "settled") return -1;
-      return (b.date ?? "").localeCompare(a.date ?? "");
+      // Convert dd/MM/yyyy → yyyyMMdd for correct chronological comparison
+      const toSortKey = (d: string) => {
+        const parts = d?.split("/");
+        return parts?.length === 3 ? `${parts[2]}${parts[1]}${parts[0]}` : (d ?? "");
+      };
+      return toSortKey(b.date).localeCompare(toSortKey(a.date));
     });
 
   const FILTERS: { key: Filter; label: string }[] = [

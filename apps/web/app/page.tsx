@@ -33,9 +33,13 @@ export default function DashboardPage() {
   }, [loadData]);
 
   const handleAddLoan = async (payload: AddLoanPayload) => {
-    await addLoan(payload);
-    await loadData();
-    setToast({ message: "Loan added", type: "success" });
+    try {
+      await addLoan(payload);
+      await loadData();
+      setToast({ message: "Loan added", type: "success" });
+    } catch {
+      setToast({ message: "Failed to add loan", type: "error" });
+    }
   };
 
   const balances = buildPersonBalances(loans, repayments);
