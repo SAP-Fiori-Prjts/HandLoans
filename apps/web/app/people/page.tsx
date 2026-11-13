@@ -111,7 +111,7 @@ function PeopleContent() {
           </section>
         </div>
 
-        <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} />
+        <AddLoanModal open={showAddLoan} onClose={() => setShowAddLoan(false)} onSubmit={handleAddLoan} defaultPersonName={personName} />
         <AddRepaymentModal open={!!repaymentLoan} loan={repaymentLoan} repayments={repayments} onClose={() => setRepaymentLoan(null)} onSubmit={handleAddRepayment} />
         <BottomNav onAddLoan={() => setShowAddLoan(true)} />
       </div>

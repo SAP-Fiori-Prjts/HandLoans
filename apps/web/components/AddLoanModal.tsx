@@ -10,6 +10,7 @@ interface AddLoanModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (payload: AddLoanPayload) => Promise<void>;
+  defaultPersonName?: string;
 }
 
 // Accepts: 9876543210 | +91 9876543210 | 91 9876543210 | +919876543210
@@ -21,9 +22,9 @@ function validateIndianPhone(phone: string): string | null {
   return "Enter a valid 10-digit Indian mobile number (starting with 6–9)";
 }
 
-export default function AddLoanModal({ open, onClose, onSubmit }: AddLoanModalProps) {
+export default function AddLoanModal({ open, onClose, onSubmit, defaultPersonName }: AddLoanModalProps) {
   const [direction, setDirection] = useState<"lent" | "borrowed">("lent");
-  const [personName, setPersonName] = useState("");
+  const [personName, setPersonName] = useState(defaultPersonName ?? "");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(today());
   const [reason, setReason] = useState("");
@@ -33,7 +34,7 @@ export default function AddLoanModal({ open, onClose, onSubmit }: AddLoanModalPr
 
   const reset = () => {
     setDirection("lent");
-    setPersonName("");
+    setPersonName(defaultPersonName ?? "");
     setAmount("");
     setDate(today());
     setReason("");
@@ -149,8 +150,13 @@ export default function AddLoanModal({ open, onClose, onSubmit }: AddLoanModalPr
                     required
                     value={personName}
                     onChange={(e) => setPersonName(e.target.value)}
+                    readOnly={!!defaultPersonName}
                     placeholder="Enter name"
-                    className="w-full bg-[#161f2e] border border-[#2a3547] rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition-colors"
+                    className={`w-full border rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none transition-colors ${
+                      defaultPersonName
+                        ? "bg-[#1e2d40] border-[#2a3547] cursor-default"
+                        : "bg-[#161f2e] border-[#2a3547] focus:border-indigo-500"
+                    }`}
                   />
                 </div>
 
