@@ -95,10 +95,14 @@ export default function AddRepaymentModal({
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 300 }}
+            drag="y"
+            dragConstraints={{ top: 0 }}
+            dragElastic={{ top: 0, bottom: 0.4 }}
+            onDragEnd={(_: unknown, info: { offset: { y: number } }) => { if (info.offset.y > 80) handleClose(); }}
           >
             {/* Fixed top section */}
             <div className="flex-shrink-0 px-6 pt-5 pb-3">
-              <div className="w-10 h-1 bg-slate-700 rounded-full mx-auto mb-4" />
+              <div className="w-12 h-1.5 bg-slate-600 rounded-full mx-auto mb-4 cursor-grab" />
 
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-lg font-bold text-white">Add Repayment</h2>
@@ -141,7 +145,7 @@ export default function AddRepaymentModal({
                       value={amount}
                       onChange={(e) => handleAmountChange(e.target.value)}
                       placeholder="Enter amount"
-                      className="w-full bg-[#161f2e] border border-[#2a3547] rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition-colors pr-16"
+                      className="w-full bg-[#161f2e] border border-[#2a3547] rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)] transition-all pr-16"
                     />
                     <button
                       type="button"
@@ -162,7 +166,7 @@ export default function AddRepaymentModal({
                     type="date"
                     value={toInputDate(date)}
                     onChange={(e) => setDate(fromInputDate(e.target.value))}
-                    className="w-full bg-[#161f2e] border border-[#2a3547] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors [color-scheme:dark]"
+                    className="w-full bg-[#161f2e] border border-[#2a3547] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)] transition-all [color-scheme:dark]"
                   />
                 </div>
 
@@ -215,7 +219,7 @@ export default function AddRepaymentModal({
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="e.g. Via UPI, Cash"
-                    className="w-full bg-[#161f2e] border border-[#2a3547] rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full bg-[#161f2e] border border-[#2a3547] rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)] transition-all"
                   />
                 </div>
 

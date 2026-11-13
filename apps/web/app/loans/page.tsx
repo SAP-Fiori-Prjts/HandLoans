@@ -217,7 +217,22 @@ function LoansContent() {
       <main className="max-w-lg mx-auto px-4 py-4">
         {loading ? (
           <div className="space-y-3 animate-pulse">
-            {[1, 2, 3, 4].map((i) => <div key={i} className="h-16 rounded-xl bg-[#161f2e]" />)}
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="relative rounded-xl border border-[#2a3547] bg-[#161f2e] overflow-hidden">
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#2a3547] rounded-l-xl" />
+                <div className="pl-5 pr-3 py-3 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-[#2a3547] flex-shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3 w-28 rounded-md bg-[#2a3547]" />
+                    <div className="h-2.5 w-16 rounded-md bg-[#1e2d40]" />
+                  </div>
+                  <div className="flex flex-col items-end gap-1.5">
+                    <div className="h-4 w-16 rounded-md bg-[#2a3547]" />
+                    <div className="h-3 w-10 rounded-md bg-[#1e2d40]" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <LoanList loans={loans} repayments={repayments} showPerson />

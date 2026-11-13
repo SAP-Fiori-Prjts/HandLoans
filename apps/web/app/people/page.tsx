@@ -96,6 +96,31 @@ function PeopleContent() {
             </div>
           )}
 
+          {/* Stats row */}
+          <div className="grid grid-cols-3 gap-2">
+            {(() => {
+              const lentIds = new Set(personLoans.filter((l) => l.direction === "lent").map((l) => l.id));
+              const totalRepaid = repayments.filter((r) => lentIds.has(r.loanId)).reduce((s, r) => s + r.amount, 0);
+              const outstanding = person ? Math.max(0, person.netAmount) : 0;
+              return (
+                <>
+                  <div className="bg-[#161f2e] border border-[#2a3547] rounded-xl p-3 text-center">
+                    <p className="text-xl font-bold text-white">{personLoans.length}</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">Total Loans</p>
+                  </div>
+                  <div className="bg-[#161f2e] border border-emerald-500/20 rounded-xl p-3 text-center">
+                    <p className="text-sm font-bold text-emerald-400 leading-tight">{formatCurrency(totalRepaid)}</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">Repaid</p>
+                  </div>
+                  <div className="bg-[#161f2e] border border-indigo-500/20 rounded-xl p-3 text-center">
+                    <p className="text-sm font-bold text-indigo-300 leading-tight">{formatCurrency(outstanding)}</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">Outstanding</p>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+
           <button onClick={() => setShowAddLoan(true)} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm font-semibold">
             <Plus size={16} /> New Loan
           </button>
@@ -103,7 +128,24 @@ function PeopleContent() {
           <section>
             <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Loans</h2>
             {loading ? (
-              <div className="space-y-2 animate-pulse">{[1, 2].map((i) => <div key={i} className="h-16 rounded-xl bg-[#161f2e]" />)}</div>
+              <div className="space-y-2 animate-pulse">
+                {[1, 2].map((i) => (
+                  <div key={i} className="relative rounded-xl border border-[#2a3547] bg-[#161f2e] overflow-hidden">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#2a3547] rounded-l-xl" />
+                    <div className="pl-5 pr-3 py-3 flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-[#2a3547] flex-shrink-0" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-3 w-28 rounded-md bg-[#2a3547]" />
+                        <div className="h-2.5 w-16 rounded-md bg-[#1e2d40]" />
+                      </div>
+                      <div className="flex flex-col items-end gap-1.5">
+                        <div className="h-4 w-16 rounded-md bg-[#2a3547]" />
+                        <div className="h-3 w-10 rounded-md bg-[#1e2d40]" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : personLoans.length === 0 ? (
               <p className="text-center py-8 text-slate-500 text-sm">No loans with this person</p>
             ) : (
@@ -138,7 +180,21 @@ function PeopleContent() {
 
       <main className="max-w-lg mx-auto px-4 py-4">
         {loading ? (
-          <div className="space-y-3 animate-pulse">{[1, 2, 3].map((i) => <div key={i} className="h-20 rounded-2xl bg-[#161f2e]" />)}</div>
+          <div className="space-y-3 animate-pulse">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="rounded-2xl border border-[#2a3547] bg-[#161f2e] p-4 flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full bg-[#2a3547] flex-shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 w-24 rounded-md bg-[#2a3547]" />
+                  <div className="h-2.5 w-16 rounded-md bg-[#1e2d40]" />
+                </div>
+                <div className="flex flex-col items-end gap-1.5">
+                  <div className="h-5 w-16 rounded-md bg-[#2a3547]" />
+                  <div className="h-2.5 w-10 rounded-md bg-[#1e2d40]" />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : balances.length === 0 ? (
           <p className="text-center py-16 text-slate-500 text-sm">No people yet</p>
         ) : (

@@ -152,12 +152,20 @@ function LoadingSkeleton() {
 function EmptyState({ onAdd }: { onAdd: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-[#1a2035] flex items-center justify-center mb-4">
-        <span className="text-3xl">💸</span>
+      <div className="mb-6">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="80" height="80" rx="20" fill="#161f2e"/>
+          <path d="M40 56V28" stroke="#34d399" strokeWidth="2.5" strokeLinecap="round"/>
+          <path d="M28 40L40 28L52 40" stroke="#34d399" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M40 24V24" stroke="#34d399" strokeWidth="2.5" strokeLinecap="round"/>
+          <circle cx="28" cy="56" r="5" fill="#f43f5e" opacity="0.7"/>
+          <circle cx="52" cy="56" r="5" fill="#34d399" opacity="0.7"/>
+          <circle cx="40" cy="56" r="4" fill="#6366f1"/>
+        </svg>
       </div>
       <h3 className="text-lg font-semibold text-white mb-1">No loans yet</h3>
       <p className="text-sm text-slate-400 mb-6">
-        Start by recording your first hand loan
+        Tap the + button below to record your first hand loan
       </p>
       <button
         onClick={onAdd}
