@@ -4,7 +4,7 @@ import { useState } from "react";
 import { X, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { AddLoanPayload } from "@/lib/types";
-import { today, phoneToStorage } from "@/lib/utils";
+import { today, phoneToStorage, toInputDate, fromInputDate } from "@/lib/utils";
 
 interface AddLoanModalProps {
   open: boolean;
@@ -177,11 +177,10 @@ export default function AddLoanModal({ open, onClose, onSubmit }: AddLoanModalPr
                       Date
                     </label>
                     <input
-                      type="text"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      placeholder="DD/MM/YYYY"
-                      className="w-full bg-[#161f2e] border border-[#2a3547] rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition-colors"
+                      type="date"
+                      value={toInputDate(date)}
+                      onChange={(e) => setDate(fromInputDate(e.target.value))}
+                      className="w-full bg-[#161f2e] border border-[#2a3547] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors [color-scheme:dark]"
                     />
                   </div>
                   <div>

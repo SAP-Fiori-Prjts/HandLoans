@@ -18,6 +18,26 @@ export function today(): string {
   return format(new Date(), "dd/MM/yyyy");
 }
 
+export function toInputDate(dateStr: string): string {
+  if (!dateStr) return "";
+  try {
+    const parsed = parse(dateStr, "dd/MM/yyyy", new Date());
+    if (isValid(parsed)) return format(parsed, "yyyy-MM-dd");
+    const fallback = new Date(dateStr);
+    if (isValid(fallback)) return format(fallback, "yyyy-MM-dd");
+    return "";
+  } catch { return ""; }
+}
+
+export function fromInputDate(isoDate: string): string {
+  if (!isoDate) return "";
+  try {
+    const parsed = parse(isoDate, "yyyy-MM-dd", new Date());
+    if (isValid(parsed)) return format(parsed, "dd/MM/yyyy");
+    return "";
+  } catch { return ""; }
+}
+
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
