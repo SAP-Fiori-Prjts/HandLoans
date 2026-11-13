@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { getLoans, getRepayments, addLoan, addRepayment, updateLoanStatus } from "@/lib/api";
 import {
   formatCurrency, formatDate, calcLoanBalance, calcRepaymentProgress,
-  buildCallUrl, buildWhatsAppUrl, phoneToDisplay,
+  buildCallUrl, buildWhatsAppUrl, phoneToDisplay, today,
 } from "@/lib/utils";
 import type { Loan, Repayment, AddLoanPayload, AddRepaymentPayload } from "@/lib/types";
 import LoanList from "@/components/LoanList";
@@ -48,7 +48,24 @@ function LoansContent() {
 
   const handleToggleSettle = async (loan: Loan) => {
     setSettling(true);
-    await updateLoanStatus(loan.id, loan.status === "settled" ? "active" : "settled");
+    if (loan.status === "settled") {
+      await updateLoanStatus(loan.id, "active");
+    } else {
+      const loanRepayments = repayments.filter((r) => r.loanId === loan.id);
+      const remaining = calcLoanBalance(loan, loanRepayments);
+      if (remaining > 0) {
+        // Add a full repayment entry — backend auto-settles via autoSettleIfPaid
+        await addRepayment({
+          loanId: loan.id,
+          amount: remaining,
+          date: today(),
+          note: "Full",
+          comment: "Marked as settled",
+        });
+      } else {
+        await updateLoanStatus(loan.id, "settled");
+      }
+    }
     await loadData();
     setSettling(false);
   };
